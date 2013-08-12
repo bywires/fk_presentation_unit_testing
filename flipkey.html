@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>FlipKey Presentation</title>
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/flipkey.css" id="theme"> 
+    <link rel="stylesheet" href="lib/css/hemisu-light.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <div class="slides">
+
+        <section>
+          <h2>Goals</h2>
+          <ul>
+            <li>Discuss the future of testing at FlipKey</li>
+            <li>Get started with PHP and JS tests</li>
+            <li>Share strategies to make testing easier</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>Where's this headed?</h1>
+        </section>
+
+        <section>
+          <h2>We're going to build tests</h2>
+          <ul>
+            <li><strong>Unit</strong>: Verify the functionality of a specific section of code.</li>
+            <li class="fragment"><strong>Integration/Service</strong>: Software modules are combined and tested as a group.</li>
+            <li class="fragment"><strong>System/End-to-end/UI</strong>: Testing a completely integrated system.</li>
+          </ul>
+          
+          <aside class="notes">
+            <ul>
+              <li><strong>Unit</strong>: In an object-oriented environment, this is usually at the class level.  Complex dependencies and interactions to the outside world are stubbed or mocked.</li>
+              <li><strong>Integration/Service</strong>: This can mean testing integration between multiple classes or testing integration with the production environment.</li>
+            </ul>
+          </aside>
+        </section>
+        
+        <section>
+          <h2>Our coverage will look like this</h2>
+          <img src="http://martinfowler.com/bliki/images/testPyramid/pyramid.png" 
+               width="540" height="373" 
+               border="0" style="border: 0" />
+
+          <aside class="notes">
+            <ul>
+              <li><strong>Pyramid top</strong>: Slow running, expensive to create, brittle, complex, suffer from non-determinism problems</li>
+              <li><strong>Pyramid bottom</strong>: Fast running, easy to create, stable, simple</li>
+            </ul>
+          </aside>
+
+        </section>
+
+        <section>
+          <h2>We'll use tests like this</h2>
+          <ul>
+            <li>Unit tests will be run frequently as you make changes to code under test.</li>
+            <li class="fragment">All unit tests will run fast.  (<3 mins)</li>
+            <li class="fragment">All unit tests, all integration tests, and relevant system tests should pass before merging code into a release.</li>
+            <li class="fragment">If Jenkins says you broke the build, you fix it ASAP.</li>
+            <li class="fragment">Every release should have all passing tests.</li>
+          </ul>
+
+          <aside class="notes">
+            <ul>
+              <li>We don't skip writing them because of timelines.</li>
+              <li>If people don't run tests because "running tests takes too long" we have a problem.</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h1>PHP unit testing</h1>
+        </section>
+
+	<section>
+	  <h2>PHPUnit installation</h2>
+          <p><a href="http://wiki.flipkey.net/wiki/WebDevDocumentation:PhpUnitTesting">See the wiki</a> - don't use apt-get</p>
+        </section>
+
+        <section>  
+          <h2>Running tests</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current/test
+phpunit
+phpunit tests/vendors/Flipkey/Auth/IpWhitelistTest.php
+          </code></pre>
+	</section>
+
+	<section>
+	  <h2>Hello testing world</h2>
+          <pre><code class="php" data-trim>
+namespace Test;
+use Flipkey\Pancakes;
+
+class PancakesTest extends \PHPUnit_Framework_TestCase {
+    public function setUp() {
+        $this->_pancakes = new Pancakes();
+    }
+    public function testPancakesShouldBeDelicious() {
+        $this->assertTrue($this->_pancakes->areDelicious());
+    }
+}
+          </code></pre>
+	</section>
+
+        <section>
+          <h2>What about dependencies like...</h2>
+          <ul>
+            <li>Cake</li>
+            <li>Database</li>
+            <li>Memcache</li>
+            <li>API</li>
+            <li>3rd party libraries</li>
+            <li>Our own hard-to-test legacy code</li>
+          </ul>
+        </section>
+
+	<section>
+	  <h2>Test doubles</h2>
+          <pre><code class="php" data-trim>
+class CalendarTest extends \PHPUnit_Framework_TestCase {
+    public function setUp() {
+        $this->_availability = $this->getMock(
+            '\Flipkey\Property\Availability',
+            array('getBookedDates')
+        );
+
+        $this->_calendar = new Calendar($this->_availability);
+    }
+
+    public function testDatesShouldRenderAsBooked() {
+        $this->_availability->expect($this->any())
+            ->method('getBookedDates')
+            ->will($this->returnValue(array('2013-08-01')));
+
+        $this->assertContains(
+            '<div data-date="2013-08-01" class="booked">01</div>',
+            $this->_calendar->getHtml()
+        );
+    }
+}
+          </code></pre>
+	</section>
+
+        <section>
+          <h2>A little vocabulary</h2>
+          <ul>
+            <li><strong>Friendly</strong>: Dependency used directly because you trust it.</li>
+            <li class="fragment"><strong>Double</strong>: Anything used in place of production code.</li>
+            <li class="fragment"><strong>Dummy</strong>: Passed around but never actually used.</li>
+            <li class="fragment"><strong>Fake</strong>: Has working implementation, but not suitable for production.</li>
+            <li class="fragment"><strong>Stub</strong>: Provides canned answers to calls made during the test.</li>
+            <li class="fragment"><strong>Mock</strong>: Defines the calls it expects to receive.</li>
+            <li class="fragment"><strong>Spy</strong>: Defines the calls the object its decorating is expected to receive.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Coupling tests with class internals</h2>
+          <p>Only use <em>mocks</em> and <em>spies</em> when you absolutely have to.</p>
+        </section>
+
+        <section>
+	  <h2>Brittle test</h2>
+          <pre><code class="php" data-trim>
+public function testDatesShouldRenderAsBooked() {
+    $this->_availability->expect($this->once())
+        ->method('getBookedDates')
+        ->with($this->equalTo('2013'))
+        ->will($this->returnValue(array('2013-08-01')));
+
+    $this->assertContains(
+        '<div data-date="2013-08-01" class="booked">01</div>',
+        $this->_calendar->getHtml()
+    );
+}
+          </code></pre>
+
+          <aside class="notes">
+            <p>No mocking or spying done here.</p>
+          </aside>
+        </section>
+
+
+        <section>
+	  <h2>Stub it</h2>
+          <pre><code class="php" data-trim>
+public function testDatesShouldRenderAsBooked() {
+    $this->_availability->expect($this->any())
+        ->method('getBookedDates')
+        ->will($this->returnValue(array('2013-08-01')));
+
+    $this->assertContains(
+        '<div data-date="2013-08-01" class="booked">01</div>',
+        $this->_calendar->getHtml()
+    );
+}
+          </code></pre>
+
+          <aside class="notes">
+            <p>No mocking or spying done here.</p>
+          </aside>
+        </section>
+
+        <section>
+	  <h2>Mock it</h2>
+          <pre><code class="php" data-trim>
+public function testShouldLogCriticalMessage() {
+    $this->_logger->expect($this->once())
+        ->method('critical')
+        ->with($this->equalTo('Booked dates in invalid format!'));
+
+    $this->_calendar->getHtml();
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>What to test</h2>
+          <ul>
+            <li>vendors/*</li>
+            <li>TBD</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>JS unit testing</h1>
+        </section>
+
+        <section>
+          <h2>Jasmine installation</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current
+npm install
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Running tests</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current
+grunt jasmine:sandbox
+          </code></pre>
+	</section>
+
+        <section>
+          <h2>Tests in your browser</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current/test
+grunt sandbox
+          </code></pre>
+          <p><a href="http://jasmine.bmckee.flipkey.net:8010/_SpecRunner.html">Launch demo</a></p>
+	</section>
+
+        <section>
+          <h2>Gruntfile.js</h2>
+          <pre><code data-trim>
+grunt.initConfig({
+    jasmine: {
+        sandbox: {
+            src: [
+                'app/webroot/js/flipkey.*.js',
+                'app/webroot/js/listing.js'
+            ],
+            options: {
+                specs: 'app/webroot/js/test/spec/**/flipkey.*.spec.js',
+                vendor: [
+                    'app/webroot/js/prototype/prototype-1.7.js',
+                    'app/webroot/js/scriptaculous/builder.js',
+                    'app/webroot/js/flipkey.mocks.js',
+                    'app/webroot/js/flipkey.js',
+                    'app/webroot/js/flipkey_prototype.js',
+                    'app/webroot/js/datepicker/DatePicker.js',
+                    'app/webroot/js/libraries/fineuploader-3.3.js'
+                ],
+                helpers: 'app/webroot/js/test/helper/test.*.js',
+                template: require('./app/webroot/js/test/jasmine/lib/runner.js'),
+                keepRunner: true // necessary for use with connect
+            }
+        }
+    }
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Hello again testing world</h2>
+          <pre><code class="js" data-trim>
+describe('The date overlap function', function() {
+    it('returns true when the dates overlap', function() {
+        expect(areDateRangesOverlapping(
+            '08/01/2013', '08/08/2013', 
+            '08/04/2013', '08/11/2013'
+        )).toBeTruthy();
+    });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Mock object</h2>
+          <pre><code class="js" data-trim>
+describe('A form builder', function() {
+    it('can create a new form object that shows errors if arrival \
+        and departure dates are empty', function() {
+        var form = builder
+            .requireDates()
+            .build('inquiry_form');
+
+        var validator = form.getValidator();
+        spyOn(validator, 'showError');
+
+        form.validate();
+
+        expect(validator.showError).toHaveBeenCalledWith(
+            '.arrival', [ errors['travel_dates_required'] ]
+        );
+    });
+});
+          </code></pre>
+
+          <aside class="notes">
+            <p>In Jasmine "spy" means "test double"</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Test doubles in Jasmine</h2>
+          <table>
+            <tr>
+              <th>Mock</th>
+              <td><pre><code class="no-highlight">spyOn(object, method);</code></pre></td>
+            </tr>
+            <tr>
+              <th>Spy</th>
+              <td><pre><code class="no-highlight">spyOn(object, method).andCallThrough();</code></pre></td>
+            </tr>
+            <tr>
+              <th>Stub</th>
+              <td><pre><code class="no-highlight">spyOn(object, method).andReturn(value);</code></pre></td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>Async testing</h2>
+          <pre><code class="js" data-trim>
+describe('A recaptcha creator', function() {
+    it('adds captcha to a form', function() {
+        var done = false;
+
+        runs(function() {
+            createCaptcha('container', 'key', {
+                callback: function() {
+                    done = true;
+                }
+            });
+        });
+
+        waitsFor(function() { return done; }, 5000);
+
+        runs(function () {
+            expect(done).toBeTruthy();
+        });
+    });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Ajax with Humble Object</h2>
+          <pre><code class="js" data-trim>
+var options = {
+    onSuccess: function(response) {
+        // do something
+    }
+};
+
+new Ajax.Request('/abc/def', options);
+          </code></pre>
+          
+          <aside class="notes">
+            <p>Separate the Ajax request from the handlers.  Test the handlers.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Ajax stubbed</h2>
+          <pre><code class="js" data-trim>
+var done = false;
+
+function f() {
+    new Ajax.Request('/abc/def', {
+        onSuccess: function(response) {
+            done = true;
+        }
+    });
+}
+
+describe("My test function", function() {
+  it("can handle a successful response", function() {
+      spyOn(Ajax, 'Request').andCallFake(function(url, options) {
+          options.onSuccess({});
+      });
+      
+      f();
+
+      expect(done).toBeTruthy();
+  });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>What to test</h2>
+          <ul>
+            <li>Code for things other than visual effects</li>
+            <li>General-purpose libraries</li>
+            <li>Critical functionality</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>Testability</h1>
+        </section>
+
+        <section>
+          <h2>Why use Dependency Injection?</h2>
+          <pre><code class="php" data-trim>
+function f() {
+    $x = C::f();
+}
+          </code></pre>
+
+          <aside class="notes">
+            <p>No seam to modify the behavior of Availability</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Seams are your friend</h2>
+          <pre><code class="php" data-trim>
+class C {
+    public function __construct($dep) {
+        $this->_dep = $dep;
+    }
+
+    public function f1() {
+        $x = $this->_dep->f();
+    }
+
+    public function f2($o) {
+        $x = $o->f();
+    }
+
+    public function f3() {
+        $x = $this->_f3();
+    }
+
+    protected function _f3() {
+        return C2::f();
+    }
+}
+          </code></pre>
+
+          <aside class="notes">
+            <p>Basic seam examples</p>
+          </aside>
+        </section>
+
+
+        <section>
+          <h2>Why follow the Law of Demeter?</h2>
+          <pre><code class="php" data-trim>
+class Calendar {
+    public function getHtml(Property $property) {
+        $booked = $property->availability->getBookedDates();
+
+        foreach($booked as $date) {
+            // build html
+        }
+
+        return $html;
+    }
+}
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Unnecessary coupling</li>
+              <li>Hard to use test doubles</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Why adhere to the Single Responsibility Principle?</h2>
+          <h3>Classes violating the SRP...</h3>
+          <ul>
+            <li>...are more apt to require changes (shotgun surgery, instability)</li>
+            <li>...may have lots of private methods, which means code that can't be reused and can't be tested in isolation</li>
+            <li>...may have many dependencies, which means more mocking code</li>
+          </ul>
+
+          <aside class="notes">
+            <ul>
+              <li>Only one reason to change</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Why avoid work in constructors?</h2>
+          <pre><code class="php" data-trim>
+class C {
+    public function __construct($o) {
+        $this->_data = $o->f();
+    }
+}
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Doesn't this violate LoD?</li>
+              <li>What if this object doesn't get used?  Waste.</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Broken setup pattern</h2>
+          <pre><code class="php" data-trim>
+class C {
+    public function __construct($o) {
+        $this->_data = $o->f();
+    }
+
+    public function asJson() {
+        return json_encode($this->_data);
+    }
+}
+
+// TEST
+public function setUp() {
+    $this->_dep = $this->getMock('Dep', array('f'));
+    $this->_cut = new C($this->_dep);
+}
+
+public function testShouldGetDataAsJson() {
+    $this->_dep->expect($this->any())
+        ->method('f')
+        ->will($this->returnValue(array('x' => 123)));
+
+    // FAIL!!!
+    $this->assertEquals(
+        '{"x":123}', 
+        $this->_cut->asJson()
+    );
+}
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Doesn't this violate LoD?</li>
+              <li>What if this object doesn't get used?  Waste.</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>More info</h2>
+          <ul>
+            <li><a href="http://martinfowler.com/bliki/TestPyramid.html">Test Pyramid, Martin Fowler</a></li>
+            <li><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren't Stubs</a></li>
+            <li><a href="http://phpunit.de/manual/">PHPUnit</a></li>
+            <li><a href="http://pivotal.github.io/jasmine/">Jasmine</a></li>
+            <li><a href="http://gruntjs.com/">Grunt</a></li>
+            <li><a href="https://github.com/gruntjs/grunt-contrib-jasmine">Grunt/Jasmine integration</a></li>
+            <li><a href="http://phantomjs.org/">PhantomJS</a></li>
+          </ul>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+    <script src="flipkey.js"></script>
+
+  </body>
+</html>

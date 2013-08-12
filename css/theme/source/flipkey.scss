@@ -1,0 +1,30 @@
+/**
+ * Customizations to Sky theme for reveal.js.
+ */
+
+@import "sky";
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+        text-transform: none;
+        letter-spacing: -0.06em;
+        margin-bottom: 35px;
+}
+
+.reveal pre code {
+        max-height: 600px;
+
+        &.php {
+                .variable {
+                    color: #267983;
+                }       
+        }
+}
+
+.reveal table {
+        width: 100%;
+}
