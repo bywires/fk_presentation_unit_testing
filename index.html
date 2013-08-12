@@ -1,383 +1,606 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
+    <title>FlipKey Presentation</title>
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/flipkey.css" id="theme"> 
+    <link rel="stylesheet" href="lib/css/hemisu-light.css">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+  </head>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+  <body>
 
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <div class="reveal">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <div class="slides">
 
-		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+        <section>
+          <h2>Goals</h2>
+          <ul>
+            <li>Discuss the future of testing at FlipKey</li>
+            <li>Get started with PHP and JS tests</li>
+            <li>Share strategies to make testing easier</li>
+          </ul>
+        </section>
 
-		<!-- For syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <section>
+          <h1>Where's this headed?</h1>
+        </section>
 
-		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
-		<script>
-			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
-		</script>
+        <section>
+          <h2>We're going to build tests</h2>
+          <ul>
+            <li><strong>Unit</strong>: Verify the functionality of a specific section of code.</li>
+            <li class="fragment"><strong>Integration/Service</strong>: Software modules are combined and tested as a group.</li>
+            <li class="fragment"><strong>System/End-to-end/UI</strong>: Testing a completely integrated system.</li>
+          </ul>
+          
+          <aside class="notes">
+            <ul>
+              <li><strong>Unit</strong>: In an object-oriented environment, this is usually at the class level.  Complex dependencies and interactions to the outside world are stubbed or mocked.</li>
+              <li><strong>Integration/Service</strong>: This can mean testing integration between multiple classes or testing integration with the production environment.</li>
+            </ul>
+          </aside>
+        </section>
+        
+        <section>
+          <h2>Our coverage will look like this</h2>
+          <img src="http://martinfowler.com/bliki/images/testPyramid/pyramid.png" 
+               width="540" height="373" 
+               border="0" style="border: 0" />
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+          <aside class="notes">
+            <ul>
+              <li><strong>Pyramid top</strong>: Slow running, expensive to create, brittle, complex, suffer from non-determinism problems</li>
+              <li><strong>Pyramid bottom</strong>: Fast running, easy to create, stable, simple</li>
+            </ul>
+          </aside>
 
-	<body>
+        </section>
 
-		<div class="reveal">
+        <section>
+          <h2>We'll use tests like this</h2>
+          <ul>
+            <li>Unit tests will be run frequently as you make changes to code under test.</li>
+            <li class="fragment">All unit tests will run fast.  (<3 mins)</li>
+            <li class="fragment">All unit tests, all integration tests, and relevant system tests should pass before merging code into a release.</li>
+            <li class="fragment">If Jenkins says you broke the build, you fix it ASAP.</li>
+            <li class="fragment">Every release should have all passing tests.</li>
+          </ul>
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h1>Reveal.js</h1>
-					<h3>HTML Presentations Made Easy</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-					</p>
-				</section>
+          <aside class="notes">
+            <ul>
+              <li>We don't skip writing them because of timelines.</li>
+              <li>If people don't run tests because "running tests takes too long" we have a problem.</li>
+            </ul>
+          </aside>
+        </section>
 
-				<section>
-					<h2>Heads Up</h2>
-					<p>
-						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
-						support for CSS 3D transforms to see it in its full glory.
-					</p>
+        <section>
+          <h1>PHP unit testing</h1>
+        </section>
 
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
-				</section>
+	<section>
+	  <h2>PHPUnit installation</h2>
+          <p><a href="http://wiki.flipkey.net/wiki/WebDevDocumentation:PhpUnitTesting">See the wiki</a> - don't use apt-get</p>
+        </section>
 
-				<!-- Example of nested vertical slides -->
-				<section>
-					<section>
-						<h2>Vertical Slides</h2>
-						<p>
-							Slides can be nested inside of other slides,
-							try pressing <a href="#" class="navigate-down">down</a>.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 1</h2>
-						<p>Press down or up to navigate.</p>
-					</section>
-					<section>
-						<h2>Basement Level 2</h2>
-						<p>Cornify</p>
-						<a class="test" href="http://cornify.com">
-							<img width="280" height="326" src="https://s3.amazonaws.com/hakim-static/reveal-js/cornify.gif" alt="Unicorn">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 3</h2>
-						<p>That's it, time to go back up.</p>
-						<a href="#/2" class="image">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
-						</a>
-					</section>
-				</section>
+        <section>  
+          <h2>Running tests</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current/test
+phpunit
+phpunit tests/vendors/Flipkey/Auth/IpWhitelistTest.php
+          </code></pre>
+	</section>
 
-				<section>
-					<h2>Slides</h2>
-					<p>
-						Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
-					</p>
-				</section>
+	<section>
+	  <h2>Hello testing world</h2>
+          <pre><code class="php" data-trim>
+namespace Test;
+use Flipkey\Pancakes;
 
-				<section>
-					<h2>Point of View</h2>
-					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
-					</p>
-				</section>
-
-				<section>
-					<h2>Works in Mobile Safari</h2>
-					<p>
-						Try it out! You can swipe through the slides and pinch your way to the overview.
-					</p>
-				</section>
-
-				<section>
-					<h2>Marvelous Unordered List</h2>
-					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-					</ul>
-				</section>
-
-				<section>
-					<h2>Fantastic Ordered List</h2>
-					<ol>
-						<li>One is smaller than...</li>
-						<li>Two is smaller than...</li>
-						<li>Three!</li>
-					</ol>
-				</section>
-
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
-
-						For those of you who like that sort of thing. Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-
-						```
-						<section data-markdown>
-						  ## Markdown support
-
-						  For those of you who like that sort of thing.
-						  Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
-
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=cube#/transitions">Cube</a> -
-						<a href="?transition=page#/transitions">Page</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a> -
-						<a href="?transition=linear#/transitions">Linear</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?#/transitions">Default</a>
-					</p>
-				</section>
-
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						Reveal.js comes with a few themes built in: <br>
-						<a href="?theme=sky#/themes">Sky</a> -
-						<a href="?theme=beige#/themes">Beige</a> -
-						<a href="?theme=simple#/themes">Simple</a> -
-						<a href="?theme=serif#/themes">Serif</a> -
-						<a href="?theme=night#/themes">Night</a> -
-						<a href="?#/themes">Default</a>
-					</p>
-					<p>
-						<small>
-							* Theme demos are loaded after the presentation which leads to flicker. In production you should load your theme in the <code>&lt;head&gt;</code> using a <code>&lt;link&gt;</code>.
-						</small>
-					</p>
-				</section>
-
-				<section>
-					<h2>Global State</h2>
-					<p>
-						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-						will be added as a class to the document element when the slide is open. This lets you
-						apply broader style changes, like switching the background.
-					</p>
-				</section>
-
-				<section data-state="customevent">
-					<h2>Custom Events</h2>
-					<p>
-						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-					</p>
-					<pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
-Reveal.addEventListener( 'customevent', function() {
-	console.log( '"customevent" has fired' );
-} );
-					</code></pre>
-				</section>
-
-				<section>
-					<section data-background="#007777">
-						<h2>Slide Backgrounds</h2>
-						<p>
-							Set <code>data-background="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png">
-						<h2>Image Backgrounds</h2>
-						<pre><code>&lt;section data-background="image.png"&gt;</code></pre>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" data-background-repeat="repeat" data-background-size="100px">
-						<h2>Repeated Image Backgrounds</h2>
-						<pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-					</section>
-				</section>
-
-				<section data-transition="linear" data-background="#4d7e65" data-background-transition="slide">
-					<h2>Background Transitions</h2>
-					<p>
-						Pass reveal.js the <code>backgroundTransition: 'slide'</code> config argument to make backgrounds slide rather than fade.
-					</p>
-				</section>
-
-				<section data-transition="linear" data-background="#8c4738" data-background-transition="slide">
-					<h2>Background Transition Override</h2>
-					<p>
-						You can override background transitions per slide by using <code>data-background-transition="slide"</code>.
-					</p>
-				</section>
-
-				<section>
-					<h2>Clever Quotes</h2>
-					<p>
-						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-					</p>
-					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-					</blockquote>
-				</section>
-
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) ) {
-        node.className += ' roll';
-      }
-    };
-  }
+class PancakesTest extends \PHPUnit_Framework_TestCase {
+    public function setUp() {
+        $this->_pancakes = new Pancakes();
+    }
+    public function testPancakesShouldBeDelicious() {
+        $this->assertTrue($this->_pancakes->areDelicious());
+    }
 }
-					</code></pre>
-					<p>Courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-				</section>
+          </code></pre>
+	</section>
 
-				<section>
-					<h2>Intergalactic Interconnections</h2>
-					<p>
-						You can link between slides internally,
-						<a href="#/2/3">like this</a>.
-					</p>
-				</section>
+        <section>
+          <h2>What about dependencies like...</h2>
+          <ul>
+            <li>Cake</li>
+            <li>Database</li>
+            <li>Memcache</li>
+            <li>API</li>
+            <li>3rd party libraries</li>
+            <li>Our own hard-to-test legacy code</li>
+          </ul>
+        </section>
 
-				<section>
-					<section>
-						<h2>Fragmented Views</h2>
-						<p>Hit the next arrow...</p>
-						<p class="fragment">... to step through ...</p>
-						<ol>
-							<li class="fragment"><code>any type</code></li>
-							<li class="fragment"><em>of view</em></li>
-							<li class="fragment"><strong>fragments</strong></li>
-						</ol>
+	<section>
+	  <h2>Test doubles</h2>
+          <pre><code class="php" data-trim>
+class CalendarTest extends \PHPUnit_Framework_TestCase {
+    public function setUp() {
+        $this->_availability = $this->getMock(
+            '\Flipkey\Property\Availability',
+            array('getBookedDates')
+        );
 
-						<aside class="notes">
-							This slide has fragments which are also stepped through in the notes window.
-						</aside>
-					</section>
-					<section>
-						<h2>Fragment Styles</h2>
-						<p>There's a few styles of fragments, like:</p>
-						<p class="fragment grow">grow</p>
-						<p class="fragment shrink">shrink</p>
-						<p class="fragment roll-in">roll-in</p>
-						<p class="fragment fade-out">fade-out</p>
-						<p class="fragment highlight-red">highlight-red</p>
-						<p class="fragment highlight-green">highlight-green</p>
-						<p class="fragment highlight-blue">highlight-blue</p>
-					</section>
-				</section>
+        $this->_calendar = new Calendar($this->_availability);
+    }
 
-				<section>
-					<h2>Spectacular image!</h2>
-					<a class="image" href="http://lab.hakim.se/meny/" target="_blank">
-						<img width="320" height="299" src="http://s3.amazonaws.com/hakim-static/portfolio/images/meny.png" alt="Meny">
-					</a>
-				</section>
+    public function testDatesShouldRenderAsBooked() {
+        $this->_availability->expect($this->any())
+            ->method('getBookedDates')
+            ->will($this->returnValue(array('2013-08-01')));
 
-				<section>
-					<h2>Export to PDF</h2>
-					<p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
-					<iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
-					<script>
-						document.getElementById('slideshare').attributeName = 'allowfullscreen';
-					</script>
-				</section>
+        $this->assertContains(
+            '<div data-date="2013-08-01" class="booked">01</div>',
+            $this->_calendar->getHtml()
+        );
+    }
+}
+          </code></pre>
+	</section>
 
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
-						Press b or period on your keyboard to enter the 'paused' mode. This mode is helpful when you want to take distracting slides off the screen
-						during a presentation.
-					</p>
-				</section>
+        <section>
+          <h2>A little vocabulary</h2>
+          <ul>
+            <li><strong>Friendly</strong>: Dependency used directly because you trust it.</li>
+            <li class="fragment"><strong>Double</strong>: Anything used in place of production code.</li>
+            <li class="fragment"><strong>Dummy</strong>: Passed around but never actually used.</li>
+            <li class="fragment"><strong>Fake</strong>: Has working implementation, but not suitable for production.</li>
+            <li class="fragment"><strong>Stub</strong>: Provides canned answers to calls made during the test.</li>
+            <li class="fragment"><strong>Mock</strong>: Defines the calls it expects to receive.</li>
+            <li class="fragment"><strong>Spy</strong>: Defines the calls the object its decorating is expected to receive.</li>
+          </ul>
+        </section>
 
-				<section>
-					<h2>Stellar Links</h2>
-					<ul>
-						<li><a href="http://slid.es">Try the online editor</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js">Source code on GitHub</a></li>
-						<li><a href="http://twitter.com/hakimel">Follow me on Twitter</a></li>
-					</ul>
-				</section>
+        <section>
+          <h2>Coupling tests with class internals</h2>
+          <p>Only use <em>mocks</em> and <em>spies</em> when you absolutely have to.</p>
+        </section>
 
-				<section>
-					<h1>THE END</h1>
-					<h3>BY Hakim El Hattab / hakim.se</h3>
-				</section>
+        <section>
+	  <h2>Brittle test</h2>
+          <pre><code class="php" data-trim>
+public function testDatesShouldRenderAsBooked() {
+    $this->_availability->expect($this->once())
+        ->method('getBookedDates')
+        ->with($this->equalTo('2013'))
+        ->will($this->returnValue(array('2013-08-01')));
 
-			</div>
+    $this->assertContains(
+        '<div data-date="2013-08-01" class="booked">01</div>',
+        $this->_calendar->getHtml()
+    );
+}
+          </code></pre>
 
-		</div>
+          <aside class="notes">
+            <p>No mocking or spying done here.</p>
+          </aside>
+        </section>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.min.js"></script>
 
-		<script>
+        <section>
+	  <h2>Stub it</h2>
+          <pre><code class="php" data-trim>
+public function testDatesShouldRenderAsBooked() {
+    $this->_availability->expect($this->any())
+        ->method('getBookedDates')
+        ->will($this->returnValue(array('2013-08-01')));
 
-			// Full list of configuration options available here:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+    $this->assertContains(
+        '<div data-date="2013-08-01" class="booked">01</div>',
+        $this->_calendar->getHtml()
+    );
+}
+          </code></pre>
 
-				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+          <aside class="notes">
+            <p>No mocking or spying done here.</p>
+          </aside>
+        </section>
 
-				// Optional libraries used to extend on reveal.js
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/leap/leap.js', async: true }
-					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
-				]
-			});
+        <section>
+	  <h2>Mock it</h2>
+          <pre><code class="php" data-trim>
+public function testShouldLogCriticalMessage() {
+    $this->_logger->expect($this->once())
+        ->method('critical')
+        ->with($this->equalTo('Booked dates in invalid format!'));
 
-		</script>
+    $this->_calendar->getHtml();
+}
+          </code></pre>
+        </section>
 
-	</body>
+        <section>
+          <h2>What to test</h2>
+          <ul>
+            <li>vendors/*</li>
+            <li>TBD</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>JS unit testing</h1>
+        </section>
+
+        <section>
+          <h2>Jasmine installation</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current
+npm install
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Running tests</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current
+grunt jasmine:sandbox
+          </code></pre>
+	</section>
+
+        <section>
+          <h2>Tests in your browser</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current/test
+grunt sandbox
+          </code></pre>
+          <p><a href="http://jasmine.bmckee.flipkey.net:8010/_SpecRunner.html">Launch demo</a></p>
+	</section>
+
+        <section>
+          <h2>Gruntfile.js</h2>
+          <pre><code data-trim>
+grunt.initConfig({
+    jasmine: {
+        sandbox: {
+            src: [
+                'app/webroot/js/flipkey.*.js',
+                'app/webroot/js/listing.js'
+            ],
+            options: {
+                specs: 'app/webroot/js/test/spec/**/flipkey.*.spec.js',
+                vendor: [
+                    'app/webroot/js/prototype/prototype-1.7.js',
+                    'app/webroot/js/scriptaculous/builder.js',
+                    'app/webroot/js/flipkey.mocks.js',
+                    'app/webroot/js/flipkey.js',
+                    'app/webroot/js/flipkey_prototype.js',
+                    'app/webroot/js/datepicker/DatePicker.js',
+                    'app/webroot/js/libraries/fineuploader-3.3.js'
+                ],
+                helpers: 'app/webroot/js/test/helper/test.*.js',
+                template: require('./app/webroot/js/test/jasmine/lib/runner.js'),
+                keepRunner: true // necessary for use with connect
+            }
+        }
+    }
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Hello again testing world</h2>
+          <pre><code class="js" data-trim>
+describe('The date overlap function', function() {
+    it('returns true when the dates overlap', function() {
+        expect(areDateRangesOverlapping(
+            '08/01/2013', '08/08/2013', 
+            '08/04/2013', '08/11/2013'
+        )).toBeTruthy();
+    });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Mock object</h2>
+          <pre><code class="js" data-trim>
+describe('A form builder', function() {
+    it('can create a new form object that shows errors if arrival \
+        and departure dates are empty', function() {
+        var form = builder
+            .requireDates()
+            .build('inquiry_form');
+
+        var validator = form.getValidator();
+        spyOn(validator, 'showError');
+
+        form.validate();
+
+        expect(validator.showError).toHaveBeenCalledWith(
+            '.arrival', [ errors['travel_dates_required'] ]
+        );
+    });
+});
+          </code></pre>
+
+          <aside class="notes">
+            <p>In Jasmine "spy" means "test double"</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Test doubles in Jasmine</h2>
+          <table>
+            <tr>
+              <th>Mock</th>
+              <td><pre><code class="no-highlight">spyOn(object, method);</code></pre></td>
+            </tr>
+            <tr>
+              <th>Spy</th>
+              <td><pre><code class="no-highlight">spyOn(object, method).andCallThrough();</code></pre></td>
+            </tr>
+            <tr>
+              <th>Stub</th>
+              <td><pre><code class="no-highlight">spyOn(object, method).andReturn(value);</code></pre></td>
+            </tr>
+          </table>
+        </section>
+
+        <section>
+          <h2>Async testing</h2>
+          <pre><code class="js" data-trim>
+describe('A recaptcha creator', function() {
+    it('adds captcha to a form', function() {
+        var done = false;
+
+        runs(function() {
+            createCaptcha('container', 'key', {
+                callback: function() {
+                    done = true;
+                }
+            });
+        });
+
+        waitsFor(function() { return done; }, 5000);
+
+        runs(function () {
+            expect(done).toBeTruthy();
+        });
+    });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Ajax with Humble Object</h2>
+          <pre><code class="js" data-trim>
+var options = {
+    onSuccess: function(response) {
+        // do something
+    }
+};
+
+new Ajax.Request('/abc/def', options);
+          </code></pre>
+          
+          <aside class="notes">
+            <p>Separate the Ajax request from the handlers.  Test the handlers.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Ajax stubbed</h2>
+          <pre><code class="js" data-trim>
+var done = false;
+
+function f() {
+    new Ajax.Request('/abc/def', {
+        onSuccess: function(response) {
+            done = true;
+        }
+    });
+}
+
+describe("My test function", function() {
+  it("can handle a successful response", function() {
+      spyOn(Ajax, 'Request').andCallFake(function(url, options) {
+          options.onSuccess({});
+      });
+      
+      f();
+
+      expect(done).toBeTruthy();
+  });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>What to test</h2>
+          <ul>
+            <li>Code for things other than visual effects</li>
+            <li>General-purpose libraries</li>
+            <li>Critical functionality</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>Testability</h1>
+        </section>
+
+        <section>
+          <h2>Why use Dependency Injection?</h2>
+          <pre><code class="php" data-trim>
+function f() {
+    $x = C::f();
+}
+          </code></pre>
+
+          <aside class="notes">
+            <p>No seam to modify the behavior of Availability</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Seams are your friend</h2>
+          <pre><code class="php" data-trim>
+class C {
+    public function __construct($dep) {
+        $this->_dep = $dep;
+    }
+
+    public function f1() {
+        $x = $this->_dep->f();
+    }
+
+    public function f2($o) {
+        $x = $o->f();
+    }
+
+    public function f3() {
+        $x = $this->_f3();
+    }
+
+    protected function _f3() {
+        return C2::f();
+    }
+}
+          </code></pre>
+
+          <aside class="notes">
+            <p>Basic seam examples</p>
+          </aside>
+        </section>
+
+
+        <section>
+          <h2>Why follow the Law of Demeter?</h2>
+          <pre><code class="php" data-trim>
+class Calendar {
+    public function getHtml(Property $property) {
+        $booked = $property->availability->getBookedDates();
+
+        foreach($booked as $date) {
+            // build html
+        }
+
+        return $html;
+    }
+}
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Unnecessary coupling</li>
+              <li>Hard to use test doubles</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Why adhere to the Single Responsibility Principle?</h2>
+          <h3>Classes violating the SRP...</h3>
+          <ul>
+            <li>...are more apt to require changes (shotgun surgery, instability)</li>
+            <li>...may have lots of private methods, which means code that can't be reused and can't be tested in isolation</li>
+            <li>...may have many dependencies, which means more mocking code</li>
+          </ul>
+
+          <aside class="notes">
+            <ul>
+              <li>Only one reason to change</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Why avoid work in constructors?</h2>
+          <pre><code class="php" data-trim>
+class C {
+    public function __construct($o) {
+        $this->_data = $o->f();
+    }
+}
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Doesn't this violate LoD?</li>
+              <li>What if this object doesn't get used?  Waste.</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Broken setup pattern</h2>
+          <pre><code class="php" data-trim>
+class C {
+    public function __construct($o) {
+        $this->_data = $o->f();
+    }
+
+    public function asJson() {
+        return json_encode($this->_data);
+    }
+}
+
+// TEST
+public function setUp() {
+    $this->_dep = $this->getMock('Dep', array('f'));
+    $this->_cut = new C($this->_dep);
+}
+
+public function testShouldGetDataAsJson() {
+    $this->_dep->expect($this->any())
+        ->method('f')
+        ->will($this->returnValue(array('x' => 123)));
+
+    // FAIL!!!
+    $this->assertEquals(
+        '{"x":123}', 
+        $this->_cut->asJson()
+    );
+}
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Doesn't this violate LoD?</li>
+              <li>What if this object doesn't get used?  Waste.</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>More info</h2>
+          <ul>
+            <li><a href="http://martinfowler.com/bliki/TestPyramid.html">Test Pyramid, Martin Fowler</a></li>
+            <li><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren't Stubs</a></li>
+            <li><a href="http://phpunit.de/manual/">PHPUnit</a></li>
+            <li><a href="http://pivotal.github.io/jasmine/">Jasmine</a></li>
+            <li><a href="http://gruntjs.com/">Grunt</a></li>
+            <li><a href="https://github.com/gruntjs/grunt-contrib-jasmine">Grunt/Jasmine integration</a></li>
+            <li><a href="http://phantomjs.org/">PhantomJS</a></li>
+          </ul>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+    <script src="js/flipkey.js"></script>
+
+  </body>
 </html>
