@@ -80,7 +80,8 @@ module.exports = function(grunt) {
 		connect: {
 			server: {
 				options: {
-					port: 8000,
+                                        hostname: grunt.option('host') || 'localhost',
+					port: grunt.option('port') || 8000,
 					base: '.'
 				}
 			}

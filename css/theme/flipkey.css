@@ -3,11 +3,6 @@
 /**
  * Customizations to Sky theme for reveal.js.
  */
-/**
- * Sky theme for reveal.js.
- *
- * Copyright (C) 2011-2012 Hakim El Hattab, http://hakim.se
- */
 .reveal a:not(.image) {
   line-height: 1.3em; }
 
@@ -26,7 +21,7 @@ body {
 
 .reveal {
   font-family: "Open Sans", sans-serif;
-  font-size: 36px;
+  font-size: 42px;
   font-weight: 200;
   letter-spacing: -0.02em;
   color: #333333; }
@@ -149,10 +144,10 @@ body {
 .reveal h6 {
   text-transform: none;
   letter-spacing: -0.06em;
-  margin-bottom: 35px; }
+  margin-bottom: 25px; }
 
 .reveal pre code {
-  max-height: 600px; }
+  max-height: 730px; }
   .reveal pre code.php .variable {
     color: #267983; }
 

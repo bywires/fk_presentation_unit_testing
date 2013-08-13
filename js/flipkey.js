@@ -4,8 +4,8 @@ Reveal.initialize({
     overview: true,
     progress: true,
     rollingLinks: false,
-    width: 960,
-    height: 800,
+    width: 1100,
+//    height: 1000,
 
     dependencies: [
         // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/

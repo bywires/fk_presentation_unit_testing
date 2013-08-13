@@ -273,19 +273,16 @@ grunt.initConfig({
     jasmine: {
         sandbox: {
             src: [
-                'app/webroot/js/flipkey.*.js',
-                'app/webroot/js/listing.js'
+                'app/webroot/js/flipkey.*.js'
             ],
             options: {
                 specs: 'app/webroot/js/test/spec/**/flipkey.*.spec.js',
                 vendor: [
                     'app/webroot/js/prototype/prototype-1.7.js',
                     'app/webroot/js/scriptaculous/builder.js',
-                    'app/webroot/js/flipkey.mocks.js',
                     'app/webroot/js/flipkey.js',
                     'app/webroot/js/flipkey_prototype.js',
-                    'app/webroot/js/datepicker/DatePicker.js',
-                    'app/webroot/js/libraries/fineuploader-3.3.js'
+
                 ],
                 helpers: 'app/webroot/js/test/helper/test.*.js',
                 template: require('./app/webroot/js/test/jasmine/lib/runner.js'),
@@ -439,6 +436,14 @@ describe("My test function", function() {
         </section>
 
         <section>
+          <h2>If its hard to test, refactor.</h2>
+          
+          <aside class="notes">
+            <p>Refactor does not mean rewrite.</p>
+          </aside>
+        </section>
+
+        <section>
           <h2>Why use Dependency Injection?</h2>
           <pre><code class="php" data-trim>
 function f() {
@@ -512,8 +517,8 @@ class Calendar {
           <h3>Classes violating the SRP...</h3>
           <ul>
             <li>...are more apt to require changes (shotgun surgery, instability)</li>
-            <li>...may have lots of private methods, which means code that can't be reused and can't be tested in isolation</li>
-            <li>...may have many dependencies, which means more mocking code</li>
+            <li class="fragment">...may have lots of private methods, which means code that can't be reused and can't be tested in isolation</li>
+            <li class="fragment">...may have many dependencies, which means more mocking code</li>
           </ul>
 
           <aside class="notes">
@@ -545,16 +550,10 @@ class C {
           <h2>Broken setup pattern</h2>
           <pre><code class="php" data-trim>
 class C {
-    public function __construct($o) {
-        $this->_data = $o->f();
-    }
-
-    public function asJson() {
-        return json_encode($this->_data);
-    }
+    public function __construct($o) { $this->_data = $o->f(); }
+    public function asJson() { return json_encode($this->_data); }
 }
 
-// TEST
 public function setUp() {
     $this->_dep = $this->getMock('Dep', array('f'));
     $this->_cut = new C($this->_dep);
@@ -566,10 +565,7 @@ public function testShouldGetDataAsJson() {
         ->will($this->returnValue(array('x' => 123)));
 
     // FAIL!!!
-    $this->assertEquals(
-        '{"x":123}', 
-        $this->_cut->asJson()
-    );
+    $this->assertEquals('{"x":123}', $this->_cut->asJson());
 }
           </code></pre>
 
@@ -591,6 +587,8 @@ public function testShouldGetDataAsJson() {
             <li><a href="http://gruntjs.com/">Grunt</a></li>
             <li><a href="https://github.com/gruntjs/grunt-contrib-jasmine">Grunt/Jasmine integration</a></li>
             <li><a href="http://phantomjs.org/">PhantomJS</a></li>
+            <li><a href="http://misko.hevery.com/code-reviewers-guide/">Guide: Writing Testable Code, Misko Hevery</a></li>
+            <li><a href="http://wiki.flipkey.net/wiki/Bob%27s_Recommended_Reading">Bob's recommended reading wiki page</a></li>
           </ul>
         </section>
 
