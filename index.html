@@ -115,7 +115,36 @@ class PancakesTest extends \PHPUnit_Framework_TestCase {
     }
 }
           </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>namespace Test</li>
+              <li>Class name ends in "Test"</li>
+              <li>extends PHPUnit_Framework_TestCase</li>
+              <li>Method starts with "test"</li>
+              <li>Instatiate class in setUp</li>
+              <li>setUp called for every test</li>
+              <li>Explain tearDown</li>
+              <li>You don't need one test class per test</li> 
+            </ul>
+          </aside>
 	</section>
+
+        <section>
+          <h2>Where do my tests go?</h2>
+          <pre>
+test
+├── tests
+│   ├── app
+│   └── vendors
+│       ├── Flipkey
+│       └── TastyPhp
+└── vendors
+    └── Test
+        ├── Pil
+        └── Redis
+          </pre>
+        </section>
 
         <section>
           <h2>What about dependencies like...</h2>
@@ -306,6 +335,17 @@ describe('The date overlap function', function() {
     });
 });
           </code></pre>
+        </section>
+
+        <section>
+          <h2>Where do my tests go?</h2>
+          <pre>
+app/webroot/js/test
+├── helper
+├── jasmine
+│   ├── lib
+│   └── templates
+└── spec          </pre>
         </section>
 
         <section>
