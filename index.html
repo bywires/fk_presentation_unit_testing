@@ -78,6 +78,7 @@
             <ul>
               <li>We don't skip writing them because of timelines.</li>
               <li>If people don't run tests because "running tests takes too long" we have a problem.</li>
+              <li>Jenkins integration is not ready</li>
             </ul>
           </aside>
         </section>
@@ -95,7 +96,9 @@
           <h2>Running tests</h2>
           <pre><code data-trim>
 cd /data/flipkey/capfiles/current/test
+
 phpunit
+
 phpunit tests/vendors/Flipkey/Auth/IpWhitelistTest.php
           </code></pre>
 	</section>
@@ -218,10 +221,6 @@ public function testDatesShouldRenderAsBooked() {
     );
 }
           </code></pre>
-
-          <aside class="notes">
-            <p>No mocking or spying done here.</p>
-          </aside>
         </section>
 
 
@@ -274,6 +273,7 @@ public function testShouldLogCriticalMessage() {
           <h2>Jasmine installation</h2>
           <pre><code data-trim>
 cd /data/flipkey/capfiles/current
+
 npm install
           </code></pre>
         </section>
@@ -282,6 +282,7 @@ npm install
           <h2>Running tests</h2>
           <pre><code data-trim>
 cd /data/flipkey/capfiles/current
+
 grunt jasmine:sandbox
           </code></pre>
 	</section>
@@ -290,6 +291,7 @@ grunt jasmine:sandbox
           <h2>Tests in your browser</h2>
           <pre><code data-trim>
 cd /data/flipkey/capfiles/current/test
+
 grunt sandbox
           </code></pre>
           <p><a href="http://jasmine.bmckee.flipkey.net:8010/_SpecRunner.html">Launch demo</a></p>
@@ -342,10 +344,18 @@ describe('The date overlap function', function() {
           <pre>
 app/webroot/js/test
 ├── helper
+│   ├── test.jasmine.js
+│   └── test.mocks.js
 ├── jasmine
 │   ├── lib
+│   │   └── runner.js
 │   └── templates
-└── spec          </pre>
+└── spec
+    ├── flipkey.book_now.spec.js
+    ├── flipkey.form.validator.spec.js
+    ├── flipkey.inquiry.spec.js
+    └── flipkey.listing.rates.spec.js
+          </pre>
         </section>
 
         <section>
@@ -477,6 +487,10 @@ describe("My test function", function() {
 
         <section>
           <h2>If its hard to test, refactor.</h2>
+          <div>
+            <img src="http://img2.imagesbn.com/p/9780132931755_p0_v1_s260x420.JPG" width="40%" />
+            <img src="http://img2.imagesbn.com/p/9780201485677_p0_v1_s260x420.JPG" width="40%" />
+          </div>
           
           <aside class="notes">
             <p>Refactor does not mean rewrite.</p>
@@ -608,20 +622,13 @@ public function testShouldGetDataAsJson() {
     $this->assertEquals('{"x":123}', $this->_cut->asJson());
 }
           </code></pre>
-
-          <aside class="notes">
-            <ul>
-              <li>Doesn't this violate LoD?</li>
-              <li>What if this object doesn't get used?  Waste.</li>
-            </ul>
-          </aside>
         </section>
 
         <section>
           <h2>More info</h2>
           <ul>
             <li><a href="http://martinfowler.com/bliki/TestPyramid.html">Test Pyramid, Martin Fowler</a></li>
-            <li><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren't Stubs</a></li>
+            <li><a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren't Stubs, Martin Fowler</a></li>
             <li><a href="http://phpunit.de/manual/">PHPUnit</a></li>
             <li><a href="http://pivotal.github.io/jasmine/">Jasmine</a></li>
             <li><a href="http://gruntjs.com/">Grunt</a></li>
