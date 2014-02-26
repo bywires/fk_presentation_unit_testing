@@ -28,16 +28,15 @@
           <h2>Topics</h2>
           <ul>
             <li>FlipKey.UI additions</li>
+            <li>PrototypeJS</li>
             <li>Platform testing tips</li>
             <li>Quick Jasmine refresher</li>
-            <li>JSDoc</li>
           </ul>
         </section>
 
         <section>
           <h1>FlipKey.UI additions</h1>
         </section>
-
 
         <section>
           <h2>EventEmitter</h2>
@@ -79,6 +78,15 @@ job.set('status', 'l33t');
           <h2>Emittify</h2>
           <pre><code class="js" data-trim>
 FlipKey.UI.EventEmitter.emittify(FlipKey.UI.OffCanvas);
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Custom observable class</h2>
+          <pre><code class="js" data-trim>
+var MyClass = Class.create(MySuperClass, FlipKey.UI.EventEmitterMethods, {
+    // ...
+});
           </code></pre>
         </section>
 
@@ -192,6 +200,90 @@ var KillinItView = Class.create(FlipKey.UI.View, {
         </section>
 
         <section>
+          <h1>PrototypeJS</h1>
+          <h2>You can use it.  Really.</h2>
+        </section>
+
+        <section>
+          <h2>Easier OO</h2>
+
+          <pre><code class="js" data-trim>
+var MyClass = Class.create(SuperClass, Mixin1, Mixin2, {
+    initialize: function($super) {
+        // parent constructor
+        $super(); 
+    },
+
+    add: function($super, value) {
+        $super(value);
+        // extended functionality here
+    }
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Event delegation</h2>
+
+          <h3>Bad</h3>
+          <pre><code class="js" data-trim>
+$$('.item').each(function(item) {
+    item.on('click', executeItem);
+});
+          </code></pre>
+
+          <h3>Good</h3>
+          <pre><code class="js" data-trim>
+$('item-list').on('click', '.item', executeItem);
+          </code></pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Less code to accomplish the same goal</li>
+              <li>Will still work if more 'items' are added dynamically</li>
+              <li>Fewer listeners in memory</li>
+              <li>Gets you in the habit of limiting the scope of your selectors.  Notice in the first example any 'items' on the document would be selected, but chances are the developer only wants to target 'items' in one container.  I see this flaw often as well. If you use event delegation you always are targeting the container.</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Looping</h2>
+
+          <h3>Bad</h3>
+          <pre><code class="js" data-trim>
+for(i in [1, 2, 3]) {
+    console.log(i);
+}
+// 0 1 2 each eachSlice all any collect detect...
+          </code></pre>
+
+          <h3>Good</h3>
+          <pre><code class="js" data-trim>
+[1, 2, 3].each(function(i) {
+    console.log(i);
+});
+// 0 1 2
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>invoke()</h2>
+
+          <h3>Verbose</h3>
+          <pre><code class="js" data-trim>
+$$('.item').each(function(el) {
+    el.hide();
+});              
+          </code></pre>
+
+          <h3>Brief</h3>
+          <pre><code class="js" data-trim>
+$$('.item').invoke('hide');
+          </code></pre>
+        </section>
+
+        <section>
           <h1>Platform testing tips</h1>
         </section>
 
@@ -231,7 +323,20 @@ var KillinItView = Class.create(FlipKey.UI.View, {
         </section>
 
         <section>
-          <h2>IE11 emulator not enough, use VMs</h2>
+          <h2>IE11 debugger/emulator</h2>
+          <img src="/img/ie_debugger.png" />
+
+          <aside class="notes">
+            <ul>
+              <li>Hard to find - Windows Key + D, F12</li>
+              <li>Comparable to chrome debugging tools</li>
+              <li>Use Emulation tab to test old versions of IE</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>To be sure, use VMs</h2>
           <h3><img src="http://modern.ie/cdn/img/ie_logo.png" style="border: 0; box-shadow: none; margin: 0; vertical-align: middle;"> modern.IE</h3>
           <p>Free IE VMs for any platform, virtualbox compatible</p>
 
@@ -239,6 +344,16 @@ var KillinItView = Class.create(FlipKey.UI.View, {
             <p><a href="http://modern.ie">modern.IE</a></p>
             <p>IE11 emulator is good for debugging JS since older IE versions have a terrible debugger, but its NOT good enough for manual testing.</p>
           </aside>
+        </section>
+
+        <section>
+          <h2>Console tips</h2>
+          
+          <ul>
+            <li>Add <em>debugger;</em> into your JS</li>
+            <li>De-minify JS for readability and adding breakpoints <img src="http://www.mikedoesweb.com/wp-content/uploads/2013/10/de-minify.png" /></li>
+            <li>In Chrome edit JS files locally - just double click inside file on Sources tab</li>
+          </ul>
         </section>
 
         <section>
@@ -261,7 +376,8 @@ cd /data/flipkey/capfiles/current/test
 
 grunt sandbox --host bmckeev17.flipkey.com
           </code></pre>
-          <p><a href="http://www.bmckeev17.flipkey.net:8010/_SpecRunner.html">Launch demo</a></p>
+
+          <img src="/img/jasmine.png">
 	</section>
 
         <section>
@@ -305,7 +421,7 @@ app/webroot/js/test
             <li>Critical functionality</li>
           </ul>
         </section>
-
+        
       </div>
 
     </div>
