@@ -5,7 +5,7 @@ $(function() {
         $('a[href$=".html"]', html).each(function(index, element) {
             var option = $('<option>')
                 .prop('value', element.href)
-                .text(element.href.substr( );
+                .text('/' + element.href.split('/').slice(3).join('/'));
     
             presentations.push(option);
         });
@@ -22,9 +22,7 @@ $(function() {
 
         if(!url) return;
 
-        
-
-        $.get(  )
+        $.get(url)
         .success(function() {
             console.log(arguments);
         });
