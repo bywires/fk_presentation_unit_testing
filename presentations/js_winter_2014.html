@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>FlipKey Presentation</title>
+    <link rel="stylesheet" href="/css/reveal.min.css">
+    <link rel="stylesheet" href="/css/theme/flipkey.css" id="theme"> 
+    <link rel="stylesheet" href="/lib/css/hemisu-light.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <div class="slides">
+
+        <section>
+          <h1>ALL OF THE JAVASCRIPTS</h1>
+        </section>
+
+        <section>
+          <h2>Topics</h2>
+          <ul>
+            <li>FlipKey.UI additions</li>
+            <li>Platform testing tips</li>
+            <li>Quick Jasmine refresher</li>
+            <li>JSDoc</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>FlipKey.UI additions</h1>
+        </section>
+
+
+        <section>
+          <h2>EventEmitter</h2>
+          <pre><code class="js" data-trim>
+var ee = new FlipKey.UI.EventEmitter();
+var handler = ee.on('user:new', function(emitter, memo) {
+    // emitter == ee
+    // memo == { name: 'bob', age: 31 }
+});
+
+ee.fire('user:new', { name: 'bob', age: 31 });
+
+handler.stop(); // disable handler
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>EventEmitter via Models</h2>
+          <pre><code class="js" data-trim>
+var Job = Class.create(FlipKey.UI.Model);
+
+var job = new Job();
+job.setMany({
+    company: 'FlipKey',
+    title: 'Director of killin\' it',
+    status: 'n00b'
+});
+
+job.on('change:status', function(emitter) {
+    console.log('new status', emitter.get('status'));
+});
+
+// wasn't killin' it enough
+job.set('status', 'l33t');
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Emittify</h2>
+          <pre><code class="js" data-trim>
+FlipKey.UI.EventEmitter.emittify(FlipKey.UI.OffCanvas);
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Proxies for composition</h2>
+          <pre><code class="js" data-trim>
+var KillinItView = Class.create(FlipKey.UI.View, {
+    initialize: function($super, options) {
+        $super(options);
+
+        this.buildChild('button', [
+            this.createText('Hells yes, I\'m killin\' it'),
+        ]).on('click', this.fire.curry('killinit:hellsyea'));
+    }
+});
+
+var KillinItModalView = Class.create(FlipKey.UI.View, {
+    initialize: function($super, options) {
+        $super(options);
+
+        this.modal = this.createElement('div').hide();
+        this.subview = new KillinItView({ el: this.modal });
+        this.addEventEmitterProxy(this.subview); // <--
+    }, // ...
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Emit events through DOM elements</h2>
+          <pre><code class="js" data-trim>
+var KillinItModalView = Class.create(FlipKey.UI.View, {
+    initialize: function($super, options) {
+        $super(options);
+
+        this.modal = this.createElement('div').hide();
+        this.subview = new KillinItView({ el: this.modal });
+        this.addEventEmitterProxy(this.subview);
+        this.addElementEventProxy(this.modal); // <--
+    }, // ...
+});
+          </code></pre>
+
+          <aside class="notes">
+            <p>This can be particularly useful for allowing the product Team use Google Tag Manager to listen for events and build stats on new features</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Models - nothing to it</h2>
+          <pre><code class="js" data-trim>
+var Job = Class.create(FlipKey.UI.Model);
+
+var job = new Job();
+job.setMany({
+    company: 'FlipKey',
+    title: 'Director of killin\' it',
+    status: 'n00b'
+});
+
+job.set('status', 'l33t');
+
+console.log( job.get('status') );
+// console: l33t
+
+console.log( job.getMany(['company', 'status']) );
+// console: { company: 'FlipKey', status: 'l33t' }
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Views - special event handling</h2>
+          <pre><code class="js" data-trim>
+var KillinItView = Class.create(FlipKey.UI.View, {
+    initialize: function($super, options) {
+        $super(options);
+
+        var button = this.buildChild('button', [
+            this.createText('Hells yes, I\'m killin\' it'),
+        ]);
+        this.listenToDom(button, 'click', this.hellsYea);
+
+        // also available: listenToModel, listenToView
+
+        // automatically bind(this)
+        // this.destroy() automatically removes all listeners
+    },
+
+    hellsYea: function() {
+        this.fire('killinit:hellsyea');
+    }
+});
+          </code></pre>
+
+          <aside class="notes">
+            <h2>Advantages</h2>
+            <ul>
+              <li>automatically bind(this)</li>
+              <li>destroy() removes all listeners</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>FlipKey.UI status</h2>
+          <ul>
+            <li>Not yet full-featured</li>
+            <li>Add features as you need them (but consult me first please!)</li>
+            <li>In use today! - FlipKey.UI.Calendar, FlipKey.UI.Modal</li>
+          </ul>
+        </section>
+
+        <section>
+          <h1>Platform testing tips</h1>
+        </section>
+
+        <section>
+          <h2>Chrome emulator</h2>
+          <img src="/img/chrome_emulator.png" />
+
+          <aside class="notes">
+            <p><a href="https://developers.google.com/chrome-developer-tools/docs/mobile-emulation">Mobile emulation</a></p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Chrome/Android remote debugging</h2>
+          <img src="https://developers.google.com/chrome-developer-tools/docs/remote-debugging/remote-debug-overview.jpg" />
+
+          <aside class="notes">
+            <p><a href="https://developers.google.com/chrome-developer-tools/docs/remote-debugging">Chrome on Android</a></p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Safari/iOS debugging</h2>
+          <img src="/img/ios_emulator.jpg" />
+
+          <aside class="notes">
+            <ul>
+              <li>Download XCode from App Store</li>
+              <li>Open XCode</li>
+              <li>XCode menu > Open Developer Tool > iOS Simualtor</li>
+              <li>Open iOS Safari to www.flipkey.com</li>
+              <li>Open OS X Sarafi</li>
+              <li>Safari menu > Preferences > Advanced > Show Develop menu in menu bar</li>
+              <li>Develop menu > iPhone SMiluator > www.flipkey.com
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h2>IE11 emulator not enough, use VMs</h2>
+          <h3><img src="http://modern.ie/cdn/img/ie_logo.png" style="border: 0; box-shadow: none; margin: 0; vertical-align: middle;"> modern.IE</h3>
+          <p>Free IE VMs for any platform, virtualbox compatible</p>
+
+          <aside class="notes">
+            <p><a href="http://modern.ie">modern.IE</a></p>
+            <p>IE11 emulator is good for debugging JS since older IE versions have a terrible debugger, but its NOT good enough for manual testing.</p>
+          </aside>
+        </section>
+
+        <section>
+          <h1>Quick Jasmine refresher</h1>
+        </section>
+
+        <section>
+          <h2>Running tests</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current
+
+grunt jasmine:sandbox
+          </code></pre>
+	</section>
+
+        <section>
+          <h2>Tests in your browser</h2>
+          <pre><code data-trim>
+cd /data/flipkey/capfiles/current/test
+
+grunt sandbox --host bmckeev17.flipkey.com
+          </code></pre>
+          <p><a href="http://www.bmckeev17.flipkey.net:8010/_SpecRunner.html">Launch demo</a></p>
+	</section>
+
+        <section>
+          <h2>Hello again testing world</h2>
+          <pre><code class="js" data-trim>
+describe('The date overlap function', function() {
+    it('returns true when the dates overlap', function() {
+        expect(areDateRangesOverlapping(
+            '08/01/2013', '08/08/2013', 
+            '08/04/2013', '08/11/2013'
+        )).toBeTruthy();
+    });
+});
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Where do my tests go?</h2>
+          <pre>
+app/webroot/js/test
+├── helper
+│   ├── test.jasmine.js
+│   └── test.mocks.js
+├── jasmine
+│   ├── lib
+│   │   └── runner.js
+│   └── templates
+└── spec
+    ├── flipkey.book_now.spec.js
+    ├── flipkey.form.validator.spec.js
+    ├── flipkey.inquiry.spec.js
+    └── flipkey.listing.rates.spec.js
+          </pre>
+        </section>
+
+        <section>
+          <h2>What to test</h2>
+          <ul>
+            <li>Code for things other than visual effects</li>
+            <li>General-purpose libraries</li>
+            <li>Critical functionality</li>
+          </ul>
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="/lib/js/head.min.js"></script>
+    <script src="/js/reveal.min.js"></script>
+    <script src="/js/flipkey.js"></script>
+
+  </body>
+</html>
