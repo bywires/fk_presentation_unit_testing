@@ -1,0 +1,35 @@
+body {
+    padding: 1%;
+}
+
+#wiki h1:before,  #wiki h1:after {
+    content: '=';
+}
+
+#wiki h2:before,  #wiki h2:after {
+    content: '==';
+}
+
+#wiki h3:before,  #wiki h3:after {
+    content: '===';
+}
+
+#wiki ul li:before {
+    content: '* ';
+}
+
+#wiki ol li:before {
+    content: '# ';
+}
+
+#wiki code {
+    white-space: pre;
+}
+
+#wiki code.js:before {
+    content: '<syntaxhighlight lang="javascript">';
+}
+
+#wiki code.js:after {
+    content: '</syntaxhighlight>';
+}
