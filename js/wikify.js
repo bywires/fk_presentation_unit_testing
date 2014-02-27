@@ -45,29 +45,57 @@ function getPresentationLinks(html) {
 }
 
 function wikify(html) {
-    var slides = $('.slides', html)
+    var slides = $('.slides', html);
 
-    // replace elements so they can be styled with CSS
+    // remove whitespace between elements
+    slides.htmlClean();
 
-    // img's can't use :before and :after, so replace with div
-    slides.find('img').replaceWith(function() {
-        var div = $('<div>')
-            .addClass('img')
-            .attr('data-src', this.src);
+    var map = [
+        ["h1",     "=",   "=\n\n"],
+        ["h2",     "==",  "==\n\n"],
+        ["h3",     "===", "===\n\n"],
+        ["ul, ol", "",    "\n"],
+        ["ul li",  "* ",  "\n"],
+        ["ol li",  "+ ",  "\n"],
+        ["p",      "",    "\n"],
+        ["em",     "''",  "''"],
 
-        return div;
+        ["pre code.js", "&lt;syntaxhighlight lang=\"javascript\"&gt;\n", "\n&lt;syntaxhighlight&gt;\n\n"],
+        ["pre code.php", "&lt;syntaxhighlight lang=\"php\"&gt;\n", "\n&lt;syntaxhighlight&gt;\n\n"],
+        ["pre code.python", "&lt;syntaxhighlight lang=\"python\"&gt;\n", "\n&lt;syntaxhighlight&gt;\n\n"],
+        ["pre:not(:has(>code))", "&lt;pre&gt;\n", "\n&lt;/pre&gt;\n\n"],
+    ];
+
+    $.each(map, function(index, args) {
+        var target = $(args[0], slides);
+        $('<div>').text(args[1]).insertBefore(target);
+        $('<div>').text(args[2]).insertAfter(target);
     });
 
-    // handle whitespace that will be preformatted
-    slides.find('code').html(function(index, html) {
-        return "\n" + $.trim(html) + "\n";
+    slides.find('a[href]').replaceWith(function() {
+        var target = $(this);
+        return '[' + target.prop('href') + ' ' + target.text() + ']';
     });
 
-    // pre's that don't wrap code elements
-    slides.find('pre:not(:has(>code))').addClass('pre');
+    slides.find('img[src]').replaceWith(function() {
+        var target = $(this);
+        return '[[File:' + target.prop('src') + ']]';
+    });
 
-    // add breaks for readability
-    slides.find('h1, h2, h3, ul, ol, p, pre').after('<br>');
-
-    return slides.html();
+    return slides.text();
 }
+
+// http://stackoverflow.com/a/3103269
+jQuery.fn.htmlClean = function() {
+    this.contents().filter(function() {
+        if (this.nodeType != 3) {
+            $(this).htmlClean();
+            return false;
+        }
+        else {
+            this.textContent = $.trim(this.textContent);
+            return !/\S/.test(this.nodeValue);
+        }
+    }).remove();
+    return this;
+};
