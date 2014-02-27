@@ -60,9 +60,9 @@ function wikify(html) {
         ["p",      "",    "\n"],
         ["em",     "''",  "''"],
 
-        ["pre code.js", "&lt;syntaxhighlight lang=\"javascript\"&gt;\n", "\n&lt;syntaxhighlight&gt;\n\n"],
-        ["pre code.php", "&lt;syntaxhighlight lang=\"php\"&gt;\n", "\n&lt;syntaxhighlight&gt;\n\n"],
-        ["pre code.python", "&lt;syntaxhighlight lang=\"python\"&gt;\n", "\n&lt;syntaxhighlight&gt;\n\n"],
+        ["pre code.js", "&lt;syntaxhighlight lang=\"javascript\"&gt;\n", "\n&lt;/syntaxhighlight&gt;\n\n"],
+        ["pre code.php", "&lt;syntaxhighlight lang=\"php\"&gt;\n", "\n&lt;/syntaxhighlight&gt;\n\n"],
+        ["pre code.python", "&lt;syntaxhighlight lang=\"python\"&gt;\n", "\n&lt;/syntaxhighlight&gt;\n\n"],
         ["pre:not(:has(>code))", "&lt;pre&gt;\n", "\n&lt;/pre&gt;\n\n"],
     ];
 
