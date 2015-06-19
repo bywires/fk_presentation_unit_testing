@@ -4,3 +4,13 @@ log/*.log
 tmp/**
 node_modules/
 .sass-cache
+
+### JetBrains template
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion
+
+*.iml
+
+## Directory-based project format:
+.idea/
+
+

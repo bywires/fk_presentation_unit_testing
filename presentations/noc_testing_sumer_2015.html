@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>FlipKey Presentation</title>
+    <link rel="stylesheet" href="/css/reveal.min.css">
+    <link rel="stylesheet" href="/css/theme/flipkey.css" id="theme">
+    <link rel="stylesheet" href="/lib/css/hemisu-light.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+        if (window.location.search.match( /print-pdf/ )) {
+            document.write( '<link rel="stylesheet" href="/css/print/pdf.css" type="text/css">' );
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <div class="slides">
+
+        <section>
+            <h1>NOC JS Testing</h1>
+        </section>
+
+        <section>
+            <h2>Run it!</h2>
+            <pre><code class="bash" data-trim>
+grunt karma:dev
+grunt karma:serve
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>Write a test</h2>
+            <pre><code class="js" data-trim>
+/* vr-supply/web/src/test/js/spec/example_spec.js */
+define([
+  "chai",
+  "string_util"
+], function(chai, sinon, StringUtil) {
+  describe("A string utility", function() {
+      it("should count words in a string", function() {
+          chai.assert.equal(
+              StringUtil.countWords("THIS.  IS.  SPARTA!!!"),
+              3
+          );
+      });
+  });
+});
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>Debugging in the browser</h2>
+            <img src="../img/karma-test-debug.png" alt="" />
+        </section>
+
+        <section>
+            <h2>Target one test</h2>
+            <pre><code class="js" data-trim>
+describe("A string utility", function() {
+    // More tests...
+                
+    it.only("should count words in a string", function() {
+        chai.assert.equal(
+            StringUtil.countWords("THIS.  IS.  SPARTA!!!"),
+            3
+        );
+    });
+                
+    // More tests...
+});
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>Stubbing Ajax</h2>
+            <pre><code class="js" data-trim>
+describe("A User data access object", function() {
+    var server;
+    beforeEach(function() {
+        server = sinon.fakeServer.create();
+        server.respondImmediately = true;
+    });
+    afterEach(function() { server.restore(); });
+
+    it("should get a single user", function() {
+        server.respondWith("/users/123", [
+            200, { "Content-Type": "application/json" },
+            JSON.stringify({ name: "Bob" })
+        ]);
+
+        var user = {};
+        UserDao.getUserById(123).done(function(data) {
+            user = data;
+        });
+
+        chai.assert.equal(user.name, "Bob");
+    });
+});
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>Faking setTimeout</h2>
+            <pre><code class="js" data-trim>
+describe("A fading transition", function() {
+    it("should take 1 seconds to complete", function() {
+        clock = sinon.useFakeTimers();
+
+        // 1 second to complete fade in, 0 seconds in
+        fadeIn(el, 1000);
+        chai.assert.equal(getOpacity(el), 0);
+
+        // 0.5 seconds in should be 50% opaque
+        clock.tick(500);
+        chai.assert.equal(getOpacity(el), 0.5);
+
+        // 1 second in should be 100% opaque
+        clock.tick(500);
+        chai.assert.equal(getOpacity(el), 1);
+
+        clock.restore();
+    });
+});
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>Faking Date</h2>
+            <pre><code class="js" data-trim>
+describe("A booking quote", function() {
+    var clock;
+
+    beforeEach(function() {
+        // "now" is 2015-06-01
+        clock = sinon.useFakeTimers(1433116800000);
+    });
+
+    afterEach(function() {
+        clock.restore();
+    });
+
+    it("should allow dates in the future", function() {
+        quote.setArrival("2015-07-01");
+        chai.assert.ok(quote.isValid());
+    });
+    it("should not allow dates in the past", function() {
+        quote.setArrival("2015-05-01");
+        chai.assert.notOk(quote.isValid());
+    });
+});
+            </code></pre>
+        </section>
+
+        <section>
+            <h2>DustJS</h2>
+            <ul>
+                <li>All en-US templates loaded automatically on global <code>dust</code> object</li>
+                <li>Compile <em>before</em> running tests</li>
+                <li>Recompile for changes to take effect</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>PhantomJS</h2>
+            <ul>
+                <li>PhantomJS != Chrome/Firefox/IE</li>
+                <li>See vr-supply/web/src/test/js/polyfill.js</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Globals</h2>
+            <ul>
+                <li>See vr-supply/web/src/test/js/globals.js</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>More on JS testing</h2>
+            <p><a href="https://docs.dev.tripadvisor.com/display/VR/Javascript+Unit+Testing">Javascript Unit Testing</a></p>
+        </section>
+        
+    </div>
+
+</div>
+
+<script src="/lib/js/head.min.js"></script>
+<script src="/js/reveal.min.js"></script>
+<script src="/js/flipkey.js"></script>
+
+</body>
+</html>
