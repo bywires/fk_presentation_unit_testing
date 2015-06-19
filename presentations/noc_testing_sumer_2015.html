@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>FlipKey Presentation</title>
+    <title>NOC JS</title>
     <link rel="stylesheet" href="/css/reveal.min.css">
     <link rel="stylesheet" href="/css/theme/flipkey.css" id="theme">
     <link rel="stylesheet" href="/lib/css/hemisu-light.css">
@@ -21,7 +21,40 @@
 <div class="reveal">
 
     <div class="slides">
+        <section>
+            <h1>NOC JS</h1>
+        </section>
 
+        <section>
+            <h2>Internal libs</h2>
+            <ul>
+                <li><em>Form Helper</em> - common form functionality</li>
+                <li><em>Bank Validators</em> - validation for bank-related identifiers</li>
+                <li><em>RequireJS async</em> - load AMD files on on the fly (currently, used for loading locale-specific definitions)</li>
+                <li><em>Tracking</em> - TA and GA tracking baked into one lib</li>
+                <li>More in <code>libs/moment.js</code></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Localization libs</h2>
+            <ul>
+                <li><em>Moment</em> - localized date formatting (wrapped in <code>libs/moment.js</code>)</li>
+                <li><em>Accounting</em> - localized number and currency parsing and formatting</li>
+                <li><em>MessageFormat</em> - MessageFormat-style translation string formatting (wrapped in <code>libs/translator.js</code>)</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>Picking 3rd Party JS</h2>
+            <ul>
+                <li>The least we need and no more</li>
+                <li>Small file size</li>
+                <li>Popular on Bower, NPM, and Github</li>
+                <li><a href="https://docs.dev.tripadvisor.com/display/VR/Third+party+library+selection+criteria#Thirdpartylibraryselectioncriteria-Javascript">More...</a></li>
+            </ul>
+        </section>
+        
         <section>
             <h1>NOC JS Testing</h1>
         </section>
